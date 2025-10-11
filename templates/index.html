@@ -2,10 +2,14 @@
 <html lang="es">
   <head>
     <meta charset="UTF-8">
-    <title>Hola mundo</title>
+    <title>Página prueba</title>
   </head>
   <body>
     <h1>Hola mundo desde Render + Postgres</h1>
+    <p>Estos son los registros en la tabla "items":</p>
+    <p>Cordero Cruz Ian Alejandro</p>
+    <p>Chapina de la Rosa Jose Antonio</p>
+    <p>Aviña Durán Ramses</p>
     {% if rows %}
       <ul>
         {% for id, nombre, descripcion in rows %}
