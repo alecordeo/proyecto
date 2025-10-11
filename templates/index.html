@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8">
+    <title>Hola mundo</title>
+  </head>
+  <body>
+    <h1>Hola mundo desde Render + Postgres</h1>
+    {% if rows %}
+      <ul>
+        {% for id, nombre, descripcion in rows %}
+          <li>{{ id }} — <strong>{{ nombre }}</strong>: {{ descripcion }}</li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p>No hay registros (o error al leer BD).</p>
+    {% endif %}
+  </body>
+</html>
