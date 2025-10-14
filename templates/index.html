@@ -15,6 +15,7 @@
         .student-list { background: #e9f7ef; padding: 15px; border-radius: 5px; margin: 20px 0; }
         code { background: #f4f4f4; padding: 2px 5px; border-radius: 3px; font-family: monospace; }
         .initial-message { color: #666; font-style: italic; }
+        .error { color: #d9534f; background: #f8d7da; padding: 10px; border-radius: 3px; }
     </style>
 </head>
 <body>
@@ -38,6 +39,12 @@
             </form>
         </div>
 
+        {% if error %}
+        <div class="error">
+            <strong>Error:</strong> {{ error }}
+        </div>
+        {% endif %}
+
         <div class="examples">
             <h3>🎯 Ejemplos para probar SQL Injection:</h3>
             <ul>
@@ -49,16 +56,13 @@
             </ul>
         </div>
 
+        {% if show_results %}
         <div class="results">
             <h3>
-                {% if request.method == "POST" %}
-                    {% if search_term %}
-                        Resultados para "{{ search_term }}":
-                    {% else %}
-                        Todos los registros:
-                    {% endif %}
+                {% if search_term %}
+                    Resultados para "{{ search_term }}":
                 {% else %}
-                    🔍 Busca en la base de datos
+                    Todos los registros:
                 {% endif %}
             </h3>
            
@@ -70,13 +74,15 @@
                 </ul>
                 <p>Total: {{ rows|length }} registros</p>
             {% else %}
-                {% if request.method == "POST" %}
-                    <p>No se encontraron resultados para "{{ search_term }}"</p>
-                {% else %}
-                    <p class="initial-message">Ingresa un término de búsqueda para ver los registros de la base de datos</p>
-                {% endif %}
+                <p>No se encontraron resultados para "{{ search_term }}"</p>
             {% endif %}
         </div>
+        {% else %}
+        <div class="results">
+            <h3>🔍 Busca en la base de datos</h3>
+            <p class="initial-message">Ingresa un término de búsqueda para ver los registros</p>
+        </div>
+        {% endif %}
 
         <div class="vulnerable">
             ⚠️ ADVERTENCIA: Esta aplicación es vulnerable a SQL Injection - Solo para fines educativos

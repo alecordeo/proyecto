@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect, url_for
 import os
 import psycopg2
 from urllib.parse import urlparse
@@ -19,9 +19,7 @@ def get_conn():
 
 @app.route("/", methods=["GET", "POST"])
 def index():
-    rows = []
-    search_term = ""
-   
+    # Solo manejar POST para procesar búsquedas
     if request.method == "POST":
         search_term = request.form.get("search", "")
        
@@ -43,11 +41,25 @@ def index():
             cur.close()
             conn.close()
            
+            # Pasar los resultados como parámetros en la redirección
+            return render_template("index.html",
+                                 rows=rows,
+                                 search_term=search_term,
+                                 show_results=True)
+           
         except Exception as e:
             print("Error en búsqueda:", e)
-            rows = []
-
-    return render_template("index.html", rows=rows, search_term=search_term)
+            return render_template("index.html",
+                                 rows=[],
+                                 search_term=search_term,
+                                 error=str(e),
+                                 show_results=True)
+   
+    # GET request - mostrar página limpia
+    return render_template("index.html",
+                         rows=[],
+                         search_term="",
+                         show_results=False)
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
