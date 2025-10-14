@@ -1,23 +1,84 @@
 <!DOCTYPE html>
 <html lang="es">
-  <head>
+<head>
     <meta charset="UTF-8">
-    <title>Página prueba</title>
-  </head>
-  <body>
-    <h1>Hola mundo desde Render + Postgres</h1>
-    <p>Estos son los registros en la tabla "items":</p>
-    <p>Cordero Cruz Ian Alejandro</p>
-    <p>Chapina de la Rosa Jose Antonio</p>
-    <p>Aviña Durán Ramses</p>
-    {% if rows %}
-      <ul>
-        {% for id, nombre, descripcion in rows %}
-          <li>{{ id }} — <strong>{{ nombre }}</strong>: {{ descripcion }}</li>
-        {% endfor %}
-      </ul>
-    {% else %}
-      <p>No hay registros (o error al leer BD).</p>
-    {% endif %}
-  </body>
+    <title>Práctica SQL Injection</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        .container { max-width: 900px; margin: 0 auto; }
+        .search-box { margin: 20px 0; padding: 20px; background: #f5f5f5; border-radius: 5px; }
+        input[type="text"] { padding: 10px; width: 400px; margin-right: 10px; }
+        input[type="submit"] { padding: 10px 20px; background: #007bff; color: white; border: none; border-radius: 3px; cursor: pointer; }
+        .examples { background: #fffacd; padding: 15px; margin: 20px 0; border-left: 4px solid #ffeb3b; }
+        .vulnerable { color: #d9534f; font-weight: bold; background: #f8d7da; padding: 10px; border-radius: 3px; }
+        .results { margin: 30px 0; }
+        .student-list { background: #e9f7ef; padding: 15px; border-radius: 5px; margin: 20px 0; }
+        code { background: #f4f4f4; padding: 2px 5px; border-radius: 3px; font-family: monospace; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔓 Práctica de SQL Injection</h1>
+       
+        <div class="student-list">
+            <h2>Integrantes del equipo:</h2>
+            <ul>
+                <li>Cordero Cruz Ian Alejandro</li>
+                <li>Chapina de la Rosa Jose Antonio</li>
+                <li>Aviña Durán Ramses</li>
+            </ul>
+        </div>
+
+        <div class="search-box">
+            <h3>🔍 Búsqueda en la base de datos:</h3>
+            <form method="post">
+                <input type="text" name="search" value="{{ search_term }}" placeholder="Buscar por nombre...">
+                <input type="submit" value="Buscar">
+                {% if search_term %}
+                    <a href="/" style="margin-left: 10px;">Ver todos</a>
+                {% endif %}
+            </form>
+        </div>
+
+        <div class="examples">
+            <h3>🎯 Ejemplos para probar SQL Injection:</h3>
+            <ul>
+                <li><code>' OR '1'='1</code> - Mostrar todos los registros</li>
+                <li><code>Hola' OR 1=1--</code> - Bypass de autenticación</li>
+                <li><code>' UNION SELECT 1,version(),3 --</code> - Ver versión de PostgreSQL</li>
+                <li><code>' UNION SELECT 1,current_database(),3 --</code> - Ver nombre de BD</li>
+                <li><code>' UNION SELECT 1,table_name,3 FROM information_schema.tables --</code> - Listar tablas</li>
+            </ul>
+        </div>
+
+        <div class="results">
+            <h3>
+                {% if search_term %}
+                    Resultados para "{{ search_term }}":
+                {% else %}
+                    Registros en la tabla "ejemplo":
+                {% endif %}
+            </h3>
+           
+            {% if rows %}
+                <ul>
+                    {% for id, nombre, descripcion in rows %}
+                        <li><strong>{{ id }}</strong> — {{ nombre }}: {{ descripcion }}</li>
+                    {% endfor %}
+                </ul>
+                <p>Total: {{ rows|length }} registros</p>
+            {% else %}
+                {% if request.method == "POST" %}
+                    <p>No se encontraron resultados para "{{ search_term }}"</p>
+                {% else %}
+                    <p>No hay registros o error al conectar con la base de datos.</p>
+                {% endif %}
+            {% endif %}
+        </div>
+
+        <div class="vulnerable">
+            ⚠️ ADVERTENCIA: Esta aplicación es vulnerable a SQL Injection - Solo para fines educativos
+        </div>
+    </div>
+</body>
 </html>
