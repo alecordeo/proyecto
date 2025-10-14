@@ -14,6 +14,7 @@
         .results { margin: 30px 0; }
         .student-list { background: #e9f7ef; padding: 15px; border-radius: 5px; margin: 20px 0; }
         code { background: #f4f4f4; padding: 2px 5px; border-radius: 3px; font-family: monospace; }
+        .initial-message { color: #666; font-style: italic; }
     </style>
 </head>
 <body>
@@ -34,13 +35,10 @@
             <form method="post">
                 <input type="text" name="search" value="{{ search_term }}" placeholder="Buscar por nombre...">
                 <input type="submit" value="Buscar">
-                {% if search_term %}
-                    <a href="/" style="margin-left: 10px;">Ver todos</a>
-                {% endif %}
             </form>
         </div>
 
-        <!--<div class="examples">
+        <div class="examples">
             <h3>🎯 Ejemplos para probar SQL Injection:</h3>
             <ul>
                 <li><code>' OR '1'='1</code> - Mostrar todos los registros</li>
@@ -49,14 +47,18 @@
                 <li><code>' UNION SELECT 1,current_database(),3 --</code> - Ver nombre de BD</li>
                 <li><code>' UNION SELECT 1,table_name,3 FROM information_schema.tables --</code> - Listar tablas</li>
             </ul>
-        </div>-->
+        </div>
 
         <div class="results">
             <h3>
-                {% if search_term %}
-                    Resultados para "{{ search_term }}":
+                {% if request.method == "POST" %}
+                    {% if search_term %}
+                        Resultados para "{{ search_term }}":
+                    {% else %}
+                        Todos los registros:
+                    {% endif %}
                 {% else %}
-                    Registros en la tabla "ejemplo":
+                    🔍 Busca en la base de datos
                 {% endif %}
             </h3>
            
@@ -71,7 +73,7 @@
                 {% if request.method == "POST" %}
                     <p>No se encontraron resultados para "{{ search_term }}"</p>
                 {% else %}
-                    <p>No hay registros o error al conectar con la base de datos.</p>
+                    <p class="initial-message">Ingresa un término de búsqueda para ver los registros de la base de datos</p>
                 {% endif %}
             {% endif %}
         </div>
